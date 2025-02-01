@@ -1,3 +1,6 @@
+import datetime
+import time
+
 import discord
 from discord.ext import commands
 
@@ -5,15 +8,18 @@ class Utility(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
     @commands.command(name="ping")
+    @commands.cooldown(rate=1, per=5, type=commands.BucketType.user)
     async def ping(self, ctx):
         embed = discord.Embed(title="Ping", colour=discord.Colour.blue())
-        embed.add_field(name=f"{self.bot.user.name}'s Latency (ms): ", value=f"{round(self.bot.latency * 1000)}ms", inline=True)
+        embed.add_field(name=f"{self.bot.user.name}'s Latency (ms): ", value=f"{round(self.bot.latency * 1000)}ms",
+                        inline=True)
         embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar)
+        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
         await ctx.send(embed=embed)
 
     @commands.command(name="serverinfo")
+    @commands.cooldown(rate=1, per=5, type=commands.BucketType.user)
     async def server_info(self, ctx):
         embed = discord.Embed(title="Server Information", colour=discord.Colour.blue())
         embed.add_field(name="Server name", value=f"{ctx.guild.name}", inline=True)
@@ -28,8 +34,25 @@ class Utility(commands.Cog):
         embed.add_field(name="", value=f"", inline=False)
         embed.add_field(name="Created at", value=f"{ctx.guild.created_at}", inline=True)
         embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar)
+        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
         embed.set_thumbnail(url=ctx.guild.icon)
         await ctx.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        global startTime
+        print("Initialising uptime timer")
+        startTime = time.time()
+
+    @commands.command(name="uptime")
+    @commands.cooldown(rate=1, per=5, type=commands.BucketType.user)
+    async def uptime(self, ctx):
+        uptime = str(datetime.timedelta(seconds=int(round(time.time() - startTime))))
+        embed = discord.Embed(title="Uptime", description=f"{self.bot.user.name} has been running for `{uptime}`", colour=discord.Colour.blue())
+        embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar)
+        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
+        await ctx.send(embed=embed)
+
 
 
 async def setup(bot):
