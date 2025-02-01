@@ -1,0 +1,4 @@
+.env
+Pipfile
+.idea/
+cogs/__pycache__
