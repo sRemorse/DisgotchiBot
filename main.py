@@ -24,6 +24,12 @@ async def load_cogs() -> None:
             await bot.load_extension(f"cogs.{filename[:-3]}")
             print(f"Loaded: {filename}")
 
+@bot.tree.error
+async def on_app_command_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
+    print("Cooldown error triggered")
+    if isinstance(error, discord.app_commands.CommandOnCooldown):
+        embed = discord.Embed(description=f"Please wait {int(error.retry_after)} seconds.", colour=discord.Colour.yellow())
+        await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=error.retry_after)
 
 async def main():
     async with bot:
