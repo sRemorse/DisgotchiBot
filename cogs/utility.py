@@ -3,11 +3,12 @@ import time
 
 import discord
 from discord.ext import commands
+import discord.app_commands
 
 class Utility(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
+    # TODO: Convert this to a slash command
     @commands.command(name="ping")
     @commands.cooldown(rate=1, per=5, type=commands.BucketType.user)
     async def ping(self, ctx):
@@ -17,6 +18,7 @@ class Utility(commands.Cog):
         embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
         await ctx.send(embed=embed)
 
+    # TODO: Convert this to a slash command
     @commands.command(name="serverinfo")
     @commands.cooldown(rate=1, per=5, type=commands.BucketType.user)
     async def server_info(self, ctx):
@@ -43,14 +45,18 @@ class Utility(commands.Cog):
         print("Initialising uptime timer")
         startTime = time.time()
 
-    @commands.command(name="uptime")
-    @commands.cooldown(rate=1, per=5, type=commands.BucketType.user)
-    async def uptime(self, ctx):
+    @discord.app_commands.command(name="uptime", description="Display the bots current uptime")
+    async def uptime(self, interaction: discord.Interaction):
         uptime = str(datetime.timedelta(seconds=int(round(time.time() - startTime))))
         embed = discord.Embed(title="Uptime", description=f"{self.bot.user.name} has been running for `{uptime}`", colour=discord.Colour.blue())
-        embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar)
+        embed.set_footer(text=f"Requested by {interaction.user.name}", icon_url=interaction.user.avatar)
         embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar)
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
+
+    @discord.app_commands.command(name="test", description="A test slash command")
+    async def test(self, interaction: discord.Interaction):
+        await interaction.response.send_message("This was a test slash command")
+
 
 
 
