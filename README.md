@@ -12,7 +12,7 @@ Disgotchi is a Discord bot using the discord.py wrapper. Users can get their ver
 - Adopt a pet
 - Interact with your pet
 - Level up your pet
-- Asyncronusly run and using Postgres backend
+- Asynchronously run and using Postgres backend
 
 
 ## Environment Variables
